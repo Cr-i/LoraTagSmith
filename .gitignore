@@ -1,0 +1,27 @@
+node_modules/
+web/node_modules/
+web/dist/
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+
+# Local application state and user datasets
+server/data/projects.json
+server/data/*.json
+**/.caption-history.json
+**/*.txt
+**/*.txt.history.json
+
+# Local dataset folders and generated reports
+datasets/
+data/
+reports/
+*.log
+
+# OS/editor files
+.directory
+.DS_Store
+.vscode/

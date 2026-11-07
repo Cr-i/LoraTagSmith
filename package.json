@@ -1,0 +1,19 @@
+{
+    "name": "loratagsmith",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "install:all": "npm install && npm --prefix web install",
+        "dev": "concurrently \"npm run server\" \"npm run web\"",
+        "server": "node server/src/index.js",
+        "web": "npm --prefix web run dev",
+        "build": "npm --prefix web run build",
+        "start": "NODE_ENV=production node server/src/index.js"
+    },
+    "dependencies": {
+        "express": "^5.1.0"
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
+    }
+}
