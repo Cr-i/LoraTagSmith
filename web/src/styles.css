@@ -58,12 +58,6 @@ body {
     letter-spacing: 1.5px;
 }
 
-.new-project {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 14px;
-}
-
 .new-project-button {
     display: flex;
     align-items: center;
@@ -253,7 +247,6 @@ body {
     color: #b7ee76;
 }
 
-.small-button,
 .secondary-button,
 .icon-button {
     display: inline-flex;
@@ -267,11 +260,6 @@ body {
     cursor: pointer;
 }
 
-.small-button {
-    padding: 8px 9px;
-    font: 11px 'DM Mono', monospace;
-}
-
 .secondary-button {
     padding: 9px 12px;
     font: 11px 'DM Mono', monospace;
@@ -283,7 +271,6 @@ body {
     padding: 0;
 }
 
-.small-button:hover,
 .secondary-button:hover,
 .icon-button:hover:not(:disabled) {
     border-color: #b7ee76;
@@ -504,19 +491,6 @@ select {
     font: inherit;
 }
 
-.shell {
-    width: min(1180px, calc(100% - 48px));
-    margin: 0 auto;
-    padding: 46px 0 70px;
-}
-
-.masthead {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 42px;
-}
-
 .brand-mark {
     display: grid;
     place-items: center;
@@ -555,19 +529,6 @@ h2 {
     margin-top: 12px;
     color: #9aa9a2;
     font-size: 14px;
-}
-
-.connection-pill {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #b7ee76;
-    font: 500 11px 'DM Mono', monospace;
-    letter-spacing: 1px;
-    border: 1px solid #2e4b40;
-    padding: 9px 12px;
-    border-radius: 99px;
 }
 
 .status-dot {
@@ -1234,27 +1195,6 @@ textarea {
     font-size: 12px;
 }
 
-.caption-comparison {
-    display: grid;
-    gap: 5px;
-    margin-top: 9px;
-    padding: 9px;
-    border-left: 2px solid #e4ba6b;
-    background: #141f1d;
-}
-
-.caption-comparison span {
-    color: #e4ba6b;
-    font: 9px 'DM Mono', monospace;
-    letter-spacing: 1px;
-}
-
-.caption-comparison p {
-    color: #9ab0a5;
-    font-size: 11px;
-    line-height: 1.4;
-}
-
 .caption-actions {
     display: flex;
     align-items: center;
@@ -1435,19 +1375,6 @@ textarea {
     .workflow-panel {
         width: 100%;
         margin-top: 20px;
-    }
-
-    .shell {
-        width: min(100% - 28px, 600px);
-        padding-top: 28px;
-    }
-
-    .masthead {
-        margin-bottom: 28px;
-    }
-
-    .connection-pill {
-        display: none;
     }
 
     .field-grid.two,

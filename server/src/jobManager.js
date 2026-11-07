@@ -9,12 +9,13 @@ export class JobManager {
     }
 
     create(config) {
+        const { apiKey: _apiKey, folderPath: _folderPath, ...publicConfig } = config;
         const job = {
             id: randomUUID(),
             status: "queued",
             createdAt: new Date().toISOString(),
             config: { ...config },
-            publicConfig: { ...config, folderPath: undefined },
+            publicConfig,
             events: [],
             clients: new Set(),
             process: null,
@@ -119,7 +120,7 @@ export class JobManager {
 
     trimJobs() {
         while (this.jobs.size > MAX_JOBS) {
-            const oldest = [...this.jobs.values()].find((job) => !job.clients.size && !["starting", "running", "paused"].includes(job.status));
+            const oldest = [...this.jobs.values()].find((job) => !job.clients.size && !["queued", "starting", "running", "paused"].includes(job.status));
             if (!oldest) return;
             this.jobs.delete(oldest.id);
         }

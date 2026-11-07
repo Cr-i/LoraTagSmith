@@ -4,6 +4,12 @@ import { randomUUID } from "node:crypto";
 
 const dataPath = resolve(process.env.PROJECTS_FILE || join(process.cwd(), "server", "data", "projects.json"));
 
+function sanitizeConfig(config) {
+    if (!config || typeof config !== "object") return {};
+    const { apiKey: _apiKey, ...safeConfig } = config;
+    return safeConfig;
+}
+
 function ensureDataFile() {
     if (!existsSync(dirname(dataPath))) mkdirSync(dirname(dataPath), { recursive: true });
     if (!existsSync(dataPath)) writeFileSync(dataPath, "[]\n", "utf8");
@@ -13,7 +19,10 @@ function readProjects() {
     ensureDataFile();
     try {
         const projects = JSON.parse(readFileSync(dataPath, "utf8"));
-        return Array.isArray(projects) ? projects : [];
+        if (!Array.isArray(projects)) return [];
+        const sanitizedProjects = projects.map((project) => ({ ...project, config: sanitizeConfig(project.config) }));
+        if (JSON.stringify(projects) !== JSON.stringify(sanitizedProjects)) writeProjects(sanitizedProjects);
+        return sanitizedProjects;
     } catch {
         return [];
     }
@@ -35,7 +44,7 @@ export class ProjectStore {
 
     create(name, config = {}) {
         const now = new Date().toISOString();
-        const project = { id: randomUUID(), name, config: { ...config }, createdAt: now, updatedAt: now };
+        const project = { id: randomUUID(), name, config: sanitizeConfig(config), createdAt: now, updatedAt: now };
         const projects = readProjects();
         projects.push(project);
         writeProjects(projects);
@@ -46,7 +55,7 @@ export class ProjectStore {
         const projects = readProjects();
         const index = projects.findIndex((project) => project.id === id);
         if (index < 0) return null;
-        projects[index] = { ...projects[index], name, config: { ...config }, updatedAt: new Date().toISOString() };
+        projects[index] = { ...projects[index], name, config: sanitizeConfig(config), updatedAt: new Date().toISOString() };
         writeProjects(projects);
         return projects[index];
     }

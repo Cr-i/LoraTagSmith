@@ -2,6 +2,81 @@
 
 LoraTagSmith is a local-first LoRA dataset workspace for image captioning, prompt authoring, project settings, and batch workflows. It uses a React/Vite interface, a Node.js job server, and a Python/Pillow worker.
 
+## Why LoraTagSmith Exists
+
+LoraTagSmith was created to solve a recurring problem in character LoRA dataset preparation: a vision model may describe an image correctly, but still mix permanent character identity with temporary clothing, jewelry, pose, and environment. When those concepts are mixed together, captions become inconsistent across a dataset and the resulting LoRA can learn details that should have been removable.
+
+The goal is not only to generate captions. The goal is to create a repeatable captioning workspace where:
+
+- permanent character identity is described consistently;
+- temporary clothing and accessories remain separate concepts;
+- every caption follows the same structure and formatting rules;
+- a character can be trained from many different outfits, poses, and environments;
+- the user can review, edit, retry, and history-track captions before committing them to the dataset.
+
+## The Core Idea: Layered Prompting
+
+LoraTagSmith uses two prompt layers instead of one large, improvised instruction:
+
+1. **Master Prompt**: the global captioning contract. It defines the output format, ordering, level of detail, framing, art style, environment description, and the difference between intrinsic and removable features.
+2. **Character-Specific Rules**: the identity lock for one character. It defines the permanent traits that should remain stable across images, such as hair structure, eye color, horns, scars, tattoos, tails, wings, or other anatomy.
+
+The **Trigger Word** is entered separately in the project UI. LoraTagSmith prepends it to the generated caption, so it does not need to be repeated inside either prompt layer.
+
+The application combines these layers for every image. This means the master prompt can remain stable across a project while the character rules can change when training a different character. The model receives a clear distinction between what belongs to the character and what belongs only to the current image.
+
+### Master Prompt Example
+
+The master prompt is the reusable global instruction. A project can use a prompt like this:
+
+```text
+Analyze the provided image thoroughly and generate a comprehensive, highly detailed caption suitable for SDXL character LoRA training. Avoid preamble, start directly with the description.
+
+CORE FRAMEWORK:
+You must strictly separate the character's intrinsic genetic/body features from their temporary clothing and accessories.
+- Intrinsic Character Features: Describe permanent body traits such as tattoos, scars, special skin markings, body lines, eye colors, specific multi-tone hair structures, and non-human body parts. Tie these traits consistently to the character being trained.
+- Removable Attire & Accessories: Describe all clothing, jewelry, chokers, wrist or arm bands, and hip attachments as separate, temporary items with precise shapes, colors, and textures.
+
+STRUCTURE TO FOLLOW:
+1. Art Style & Framing: Identify the medium and shot type.
+2. Intrinsic Character Breakdown: Focus on permanent genetic features.
+3. Clothing & Fit: Detail the current outfit, fabric, and fit.
+4. Removable Accessories: Detail independent jewelry and straps.
+5. Environment: Detail background elements, lighting, and atmosphere.
+
+Output the final response as a single, dense, descriptive paragraph that naturally blends all details together into a seamless caption. The application adds the configured trigger word at the beginning of the final caption.
+```
+
+### Character-Specific Rules Example
+
+The character-specific prompt is supplied separately for the character being trained. For example:
+
+```text
+Intrinsic Features to lock for this character:
+- Long dark blue hair with a vibrant purple/magenta under-dye layer.
+- A bright red highlight streak on the center bangs.
+- A pair of sharp dark red and black geometric horns on her head.
+- A thin vertical red body-line marking extending from her neck down to her torso.
+- A monstrous dark purple dragon hand and arm with sharp claws on her left side.
+- A normal human right hand.
+
+These are permanent identity features. Do not treat them as clothing, accessories, or temporary styling. Clothing, jewelry, pose, lighting, and environment remain removable image-level details.
+```
+
+For an image of this character, the application adds the configured trigger word and preserves the identity rules while still describing the image-specific outfit and setting. A simplified result might look like:
+
+```text
+shinku_nte, anime style, full body shot, long dark blue hair with vibrant purple magenta under-dye and a bright red center-bang streak, sharp dark red and black geometric horns, vertical red body-line marking, dark purple dragon left arm with sharp claws, normal human right hand, white blouse, black and red accessories, standing outdoors in a sunlit courtyard, detailed background, soft shadows
+```
+
+The exact output depends on the selected caption format and vision model. The important behavior is the separation: the character's locked anatomy stays attached to `shinku_nte`, while the outfit and environment can change from image to image.
+
+## Development Philosophy
+
+LoraTagSmith is intentionally local-first. Images and captions stay on the user's machine, local providers such as llama.cpp and Ollama work without a cloud account, and cloud providers are optional. The interface is designed around the real dataset workflow: select a project, choose a dataset, compose layered prompts, inspect images, queue a batch, edit captions, and retry only what needs attention.
+
+The project also favors reversible operations. Existing captions are visible before replacement, caption history is kept at dataset level, individual images can be retried, and a user can choose whether to process only missing captions or intentionally retag existing ones.
+
 ## Requirements
 
 - Node.js 20+ and npm
